@@ -11,7 +11,7 @@ from pytesseract import Output
 pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
 
 @dataclass
-class TableExtractorOCR:
+class BorderedTableExtractor:
     
     blur_kernel_size: tuple = (17, 17)
     min_table_area: int = 1e5
@@ -19,7 +19,12 @@ class TableExtractorOCR:
     min_cell_height: int = 10
     
     def get_tables(self, image):
-        gray_image = cv2.imread(image, cv2.IMREAD_GRAYSCALE)
+        if isinstance(image, str):
+            gray_image = cv2.imread(image)
+        elif isinstance(image, np.ndarray):
+            gray_image = image.copy()
+        else:
+            raise ValueError("image can either be path to file i.e. string or an instance of np.ndarray.")
         threshold_image = self._preprocess_image(gray_image)
         contours = self._get_contours(threshold_image)
         bounding_rects = self._find_tables(contours)
@@ -42,7 +47,8 @@ class TableExtractorOCR:
     
     def _preprocess_image(self, image):
         ''' Perform Image Thresholding'''
-        blurred_image = cv2.GaussianBlur(image, self.blur_kernel_size, cv2.BORDER_CONSTANT)
+        gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        blurred_image = cv2.GaussianBlur(gray_image, self.blur_kernel_size, cv2.BORDER_CONSTANT)
         threshold_image = cv2.adaptiveThreshold(~blurred_image, 255, cv2.ADAPTIVE_THRESH_MEAN_C,
                                                 cv2.THRESH_BINARY, 15, -2)
         return threshold_image
@@ -131,7 +137,11 @@ class TableExtractorOCR:
         return c2_top < c1_center < c2_bottom
 
     def _extract_text_from_image(self, image, rows):
-        details = pytesseract.image_to_data(image, output_type=Output.DICT, lang="eng")
+        tessdata_dir_config = '--tessdata-dir "C:/Program Files/Tesseract-OCR/tessdata"'
+        details = pytesseract.image_to_data(image, 
+                                            output_type=Output.DICT, 
+                                            lang="eng",
+                                            config=tessdata_dir_config)
         df = pd.DataFrame(details)
         df['right'] = df.left + df.width
         df['bottom'] = df.top + df.height
