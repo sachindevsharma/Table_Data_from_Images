@@ -105,7 +105,14 @@ class BorderlessTableExtractor:
             cols = sorted([first] + cols, key=lambda c: c[1])
             columns.append(cols)
             cells = list(set(rest) - set(cols))
-
+            
+            remove = []
+            for cell in cells:
+                columns, inserted = self._check_missed_cell_of_same_col(cell, columns)
+                if inserted:
+                    remove.append(cell)
+            cells = list(set(cells) - set(remove))
+            
         columns = sorted(columns, key=lambda x: x[0][0])
         return columns
 
@@ -115,6 +122,21 @@ class BorderlessTableExtractor:
         c2_left = c2[0] 
         c2_right = c2[0] + c2[2]
         return (c1_left <= c2_left <= c1_right) or (c2_left <= c1_left <= c2_right)
+    
+    def _check_missed_cell_of_same_col(self, c1, cols):
+        final_col = []
+        inserted = False
+        
+        for col in cols:
+            col_left = min([x for (x,y,w,h) in col])
+            col_right = max([x+w for (x,y,w,h) in col])
+                        
+            if (col_left <= c1[0] <= col_right):
+                col.append(c1)
+                inserted = True
+            final_col.append(col)
+            
+        return final_col, inserted
                 
     def _get_lines_to_draw_grid(self, image, rows, columns):
         bottom = [max([y+h for (x,y,w,h) in row]) for row in rows]
@@ -132,7 +154,6 @@ class BorderlessTableExtractor:
         hor_lines, ver_lines = self._remove_overlaping_lines(hor_lines, ver_lines, rows, columns)
         
         return hor_lines, ver_lines
-        
         
     def _remove_overlaping_lines(self, hor_lines, ver_lines, rows, columns):
         rows_x = []
