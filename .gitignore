@@ -1,1 +1,10 @@
-**__pycache__**
+__pycache__
+*/__pycache__/*
+.ipynb_checkpoints
+*/.ipynb_checkpoints/*
+TF2 Object Detection API/
+from pdf/
+CascadeTabNet/
+out_grid.png
+Table_segregation Illyas.py
+text_extraction.py

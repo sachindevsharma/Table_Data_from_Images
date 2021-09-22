@@ -1,1 +1,0 @@
-from .bordered_table import BorderedTableExtractor

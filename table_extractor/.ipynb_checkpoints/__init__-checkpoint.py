@@ -1,11 +1,24 @@
+from dataclasses import dataclass
 import pandas as pd
 from .bordered_table import BorderedTableExtractor
 from .borderless_table import BorderlessTableExtractor
+from .table_detection import TableDetection
 
 
+@dataclass
 class TableExtractor:
     
-    def extract_tables(self, image):
+    def find_tables(self, image):
+        tables = TableDetection().find_tables_in_image(image)
+        print(len(tables))
+        all_data = []
+        if tables:
+            for table in tables:
+                table_data = self.extract_table_data(table)
+                all_data.append(table_data)
+        return all_data
+        
+    def extract_table_data(self, image):
         ex_grid = BorderedTableExtractor()
         found, tables = ex_grid.get_tables(image)
         

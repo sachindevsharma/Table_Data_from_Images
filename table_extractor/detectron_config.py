@@ -6,7 +6,7 @@ from detectron2.config import get_cfg
 cfg = get_cfg()
 
 # Setting output directory
-cfg.OUTPUT_DIR = 'model/'
+cfg.OUTPUT_DIR = 'Table Detection/model/'
 
 # Set device cuda/cpu
 if torch.cuda.is_available():

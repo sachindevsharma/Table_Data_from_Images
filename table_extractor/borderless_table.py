@@ -16,7 +16,12 @@ class BorderlessTableExtractor:
     min_text_height_limit: int = 10
     
     def draw_grids_on_borderless_table(self, image):
-        gray_image = cv2.imread(image)
+        if isinstance(image, str):
+            gray_image = cv2.imread(image)
+        elif isinstance(image, np.ndarray):
+            gray_image = image.copy()
+        else:
+            raise ValueError("image can either be path to file i.e. string or an instance of np.ndarray.")
         image = self._preprocess_borderless_table(gray_image)
         threshold_image = self._preprocess_image(image)
         contours = self.find_contours(~threshold_image)
