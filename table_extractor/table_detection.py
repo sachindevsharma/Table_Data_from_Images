@@ -50,5 +50,8 @@ class TableDetection:
 
         return x1, y1, x2, y2
     
+    def _merge_overlapping_boxes(self, boxes):
+        return None
+    
 
     
