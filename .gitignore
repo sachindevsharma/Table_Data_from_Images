@@ -1,6 +1,7 @@
-__pycache__
-*/__pycache__/*
-.ipynb_checkpoints
+__pycache__/
+*.pyc
+table_extractor/__pycache__/
+.ipynb_checkpoints/
 */.ipynb_checkpoints/*
 TF2 Object Detection API/
 from pdf/

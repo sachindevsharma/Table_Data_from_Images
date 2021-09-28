@@ -1,14 +1,6 @@
 from dataclasses import dataclass
 import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-from pprint import pprint
-import statistics
-
 import cv2
-import pytesseract
-from pytesseract import Output
-pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
 
 @dataclass
 class BorderlessTableExtractor:

@@ -18,10 +18,8 @@ class TableDetection:
         else:
             raise ValueError("image can either be path to file i.e. string or an instance of np.ndarray.")
             
-        print(type(image))
         outputs = predictor(image)
         boxes = outputs["instances"].pred_boxes
-        print(boxes)
         table_data = self.extract_table_coordinates(boxes)
         if table_data:
             x1, y1, x2, y2 = table_data

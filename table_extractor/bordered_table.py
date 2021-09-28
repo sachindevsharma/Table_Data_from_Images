@@ -1,9 +1,6 @@
 from dataclasses import dataclass
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-from pprint import pprint
-import statistics
 
 import cv2
 import pytesseract
@@ -90,7 +87,6 @@ class BorderedTableExtractor:
         contours = [c for c in contours if cv2.contourArea(c) > self.min_table_area]
         contour_area = [cv2.contourArea(c) for c in contours]
         if contour_area:
-#             print(contour_area, np.argmax(contour_area))
             contours = [contours[np.argmax(contour_area)]]
         arcs = [0.1 * cv2.arcLength(c, True) for c in contours]
         polygons = [cv2.approxPolyDP(c, e, True) for c, e in zip(contours, arcs)]
@@ -106,12 +102,10 @@ class BorderedTableExtractor:
         # Filter out contours that aren't rectangular. 
         approx_rects = [p for p in polygons if len(p) == 4]
         bounding_rects = [cv2.boundingRect(a) for a in polygons]
-#         print('BD:', bounding_rects)
         cells = [r for r in bounding_rects 
                  if self.min_cell_width < r[2] and self.min_cell_height < r[3]
                 ]
-#         print('Cells:', cells)
-        # Assuming largest cell is table and removing it
+
         largest_cell = max(cells, key=lambda r: r[2] * r[3])
         cells = [b for b in bounding_rects if b is not largest_cell]
         
@@ -137,11 +131,11 @@ class BorderedTableExtractor:
         return c2_top < c1_center < c2_bottom
 
     def _extract_text_from_image(self, image, rows):
-        tessdata_dir_config = '--tessdata-dir "C:/Program Files/Tesseract-OCR/tessdata"'
+        config = '--oem 1 --psm 12 --tessdata-dir "C:/Program Files/Tesseract-OCR/tessdata"'
         details = pytesseract.image_to_data(image, 
                                             output_type=Output.DICT, 
                                             lang="eng",
-                                            config=tessdata_dir_config)
+                                            config=config)
         df = pd.DataFrame(details)
         df['right'] = df.left + df.width
         df['bottom'] = df.top + df.height
