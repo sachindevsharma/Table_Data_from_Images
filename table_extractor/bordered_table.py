@@ -28,7 +28,7 @@ class BorderedTableExtractor:
         tables = [gray_image[y:y+h, x:x+w] for x, y, w, h in bounding_rects]
         
         if tables:
-            return True, tables
+            return True, tables[0]
         else:
             return False, None
         
