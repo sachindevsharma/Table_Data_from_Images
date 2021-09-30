@@ -7,5 +7,4 @@ TF2 Object Detection API/
 from pdf/
 CascadeTabNet/
 out_grid.png
-Table_segregation Illyas.py
 text_extraction.py
